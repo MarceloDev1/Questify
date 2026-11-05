@@ -111,6 +111,16 @@ if ON_VERCEL:
     # A Vercel termina o HTTPS e repassa o protocolo original neste cabeçalho.
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
+# Com DEBUG desligado o Django só envia erros por e-mail; isto os manda para o
+# stderr, que é onde a Vercel (e qualquer host) mostra os logs.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "root": {"handlers": ["console"], "level": "INFO"},
+    "loggers": {"django.request": {"handlers": ["console"], "level": "ERROR", "propagate": False}},
+}
+
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
 SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "")
 
