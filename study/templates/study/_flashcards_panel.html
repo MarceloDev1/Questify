@@ -1,0 +1,47 @@
+<div id="flashcards-panel" class="stack-lg">
+  <section class="card">
+    <h2>Gerar a partir dos seus materiais</h2>
+    {% if has_materials %}
+    <form class="stack" hx-post="{% url 'flashcards' %}" hx-target="#flashcards-panel" hx-swap="outerHTML" hx-disabled-elt="find button">
+      {% include "_form_fields.html" %}
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Gerar flashcards</button>
+        <span class="htmx-indicator muted" role="status">Lendo seus materiais e gerando…</span>
+      </div>
+    </form>
+    {% else %}
+    <p class="muted">Você ainda não enviou nenhum material.</p>
+    <a class="btn btn-primary" href="{% url 'materials' %}">Enviar material</a>
+    {% endif %}
+  </section>
+
+  {% if notice %}<p class="notice" role="status">{{ notice }} <a href="{% url 'study' %}">Começar a estudar</a></p>{% endif %}
+
+  <section class="card">
+    <h2>Seus cards <span class="muted">({{ total_cards }})</span></h2>
+    {% if cards %}
+    <ul class="deck">
+      {% for card in cards %}
+      <li class="deck-item">
+        <div>
+          <p class="deck-question">{{ card.question }}</p>
+          <p class="muted deck-answer">{{ card.answer }}</p>
+          <p class="deck-meta muted">
+            {{ card.topic|default:"Sem tópico" }} ·
+            <span class="pill pill-{{ card.difficulty }}">{{ card.get_difficulty_display }}</span> ·
+            {% if card.is_due %}Pendente{% else %}Revisão em {{ card.next_review|date:"d/m/Y" }}{% endif %}
+          </p>
+        </div>
+        <button class="btn btn-ghost" type="button"
+                hx-post="{% url 'flashcard_delete' card.pk %}"
+                hx-target="#flashcards-panel" hx-swap="outerHTML"
+                hx-confirm="Excluir este card? O histórico de respostas dele também será apagado.">Excluir</button>
+      </li>
+      {% endfor %}
+    </ul>
+    {% if total_cards > page_size %}<p class="muted">Mostrando os {{ page_size }} cards mais recentes.</p>{% endif %}
+    {% else %}
+    <p class="muted">Os cards gerados aparecem aqui.</p>
+    {% endif %}
+  </section>
+</div>

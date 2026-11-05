@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Confirme seu e-mail · Questify{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <h1>Confirme seu e-mail</h1>
+  <p>Se {{ email }} ainda não tiver uma conta, enviamos um link de confirmação para esse endereço. Depois de confirmar, é só entrar.</p>
+  <a class="btn btn-primary" href="{% url 'login' %}">Ir para o login</a>
+</section>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Cadastro · Questify{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <h1>Criar conta</h1>
+  <p class="muted">Transforme seus materiais em flashcards e ganhe XP revisando.</p>
+  <form method="post" class="stack">
+    {% csrf_token %}
+    {% include "_form_fields.html" %}
+    <button class="btn btn-primary" type="submit">Criar conta</button>
+  </form>
+  <p class="muted">Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
+</section>
+{% endblock %}

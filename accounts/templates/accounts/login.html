@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Entrar · Questify{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <h1>Entrar</h1>
+  <p class="muted">Continue sua sequência de estudos.</p>
+  <form method="post" class="stack">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    {% include "_form_fields.html" %}
+    <button class="btn btn-primary" type="submit">Entrar</button>
+  </form>
+  <p class="muted">Ainda não tem conta? <a href="{% url 'signup' %}">Cadastre-se</a></p>
+</section>
+{% endblock %}

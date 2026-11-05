@@ -1,0 +1,8 @@
+<div id="hud" class="hud"{% if oob %} hx-swap-oob="true"{% endif %}>
+  <span class="hud-streak" title="Dias seguidos estudando">🔥 {{ profile.current_streak }}</span>
+  <span class="hud-level" title="{{ profile.xp }} de {{ profile.next_level_xp }} XP para o próximo nível">
+    <strong>Nv. {{ profile.level }}</strong>
+    <span class="xp-bar" role="progressbar" aria-label="Progresso do nível" aria-valuenow="{{ profile.level_progress }}" aria-valuemin="0" aria-valuemax="100"><span style="width: {{ profile.level_progress }}%"></span></span>
+    <span class="hud-xp">{{ profile.xp }} XP</span>
+  </span>
+</div>

@@ -1,0 +1,35 @@
+{% load static %}<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Questify{% endblock %}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.4/dist/htmx.min.js" defer></script>
+  <script src="{% static 'js/app.js' %}" defer></script>
+  {% block head %}{% endblock %}
+</head>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  <header class="topbar">
+    <a class="brand" href="{% url 'home' %}">Questify</a>
+    {% if profile %}
+    <nav class="nav">
+      <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>Painel</a>
+      <a href="{% url 'study' %}" {% if request.resolver_match.url_name == 'study' %}aria-current="page"{% endif %}>Estudar</a>
+      <a href="{% url 'flashcards' %}" {% if request.resolver_match.url_name == 'flashcards' %}aria-current="page"{% endif %}>Flashcards</a>
+      <a href="{% url 'materials' %}" {% if request.resolver_match.url_name == 'materials' %}aria-current="page"{% endif %}>Materiais</a>
+    </nav>
+    {% include "_hud.html" %}
+    <form method="post" action="{% url 'logout' %}" class="logout">
+      {% csrf_token %}
+      <button class="btn btn-ghost" type="submit">Sair</button>
+    </form>
+    {% endif %}
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

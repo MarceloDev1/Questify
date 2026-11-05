@@ -1,0 +1,8 @@
+Django>=5.2,<5.3
+dj-database-url>=2.2,<4
+openai>=1.50,<3
+pgvector>=0.3,<0.5
+psycopg[binary]>=3.2,<4
+pypdf>=5,<7
+python-dotenv>=1,<2
+requests>=2.32,<3

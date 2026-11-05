@@ -1,0 +1,37 @@
+<div id="materials-panel" class="stack-lg">
+  <section class="card">
+    <h2>Adicionar material</h2>
+    <form class="stack" hx-post="{% url 'materials' %}" hx-encoding="multipart/form-data" hx-target="#materials-panel" hx-swap="outerHTML" hx-disabled-elt="find button">
+      {% include "_form_fields.html" %}
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Enviar e indexar</button>
+        <span class="htmx-indicator muted" role="status">Indexando o material…</span>
+      </div>
+    </form>
+  </section>
+
+  {% if notice %}<p class="notice" role="status">{{ notice }} <a href="{% url 'flashcards' %}">Gerar flashcards</a></p>{% endif %}
+
+  <section class="card">
+    <h2>Seus materiais</h2>
+    {% if materials %}
+    <ul class="deck">
+      {% for material in materials %}
+      <li class="deck-item">
+        <div>
+          <p class="deck-question">{{ material.title }}</p>
+          <p class="muted deck-meta">{{ material.chunk_count }} {% if material.chunk_count == 1 %}trecho{% else %}trechos{% endif %}</p>
+        </div>
+        <form hx-post="{% url 'material_delete' %}" hx-target="#materials-panel" hx-swap="outerHTML"
+              hx-confirm="Excluir este material? Os flashcards já gerados continuam salvos.">
+          <input type="hidden" name="title" value="{{ material.title }}">
+          <button class="btn btn-ghost" type="submit">Excluir</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="muted">Nenhum material enviado ainda.</p>
+    {% endif %}
+  </section>
+</div>

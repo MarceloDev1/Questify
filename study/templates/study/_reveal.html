@@ -1,0 +1,16 @@
+<article class="flashcard">
+  <header class="flashcard-meta">
+    <span>{{ card.topic|default:"Sem tópico" }}</span>
+    <span class="pill pill-{{ card.difficulty }}">{{ card.get_difficulty_display }}</span>
+  </header>
+  <p class="flashcard-question">{{ card.question }}</p>
+  <div class="flashcard-answer">
+    <span class="muted">Resposta</span>
+    <p>{{ card.answer|linebreaksbr }}</p>
+  </div>
+  <form class="answer-actions" hx-post="{% url 'study_answer' card.pk %}" hx-target="#study-stage" hx-sync="this:drop">
+    {% if response_time is not None %}<input type="hidden" name="response_time" value="{{ response_time }}">{% endif %}
+    <button class="btn btn-wrong" type="submit" name="is_correct" value="0">✗ Errei</button>
+    <button class="btn btn-correct" type="submit" name="is_correct" value="1">✓ Acertei</button>
+  </form>
+</article>

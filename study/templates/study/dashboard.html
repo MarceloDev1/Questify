@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Painel · Questify{% endblock %}
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+<script src="{% static 'js/dashboard.js' %}" defer></script>
+{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Olá, {{ profile.username }}</h1>
+  {% if due_count %}<a class="btn btn-primary" href="{% url 'study' %}">Revisar {{ due_count }} {% if due_count == 1 %}card{% else %}cards{% endif %}</a>{% endif %}
+</div>
+
+<section class="stats" aria-label="Resumo">
+  <div class="stat"><span class="stat-label">Nível</span><span class="stat-value">{{ profile.level }}</span><span class="muted">{{ profile.xp }} de {{ profile.next_level_xp }} XP</span></div>
+  <div class="stat"><span class="stat-label">Sequência</span><span class="stat-value">{{ profile.current_streak }}</span><span class="muted">{% if profile.current_streak == 1 %}dia seguido{% else %}dias seguidos{% endif %}</span></div>
+  <div class="stat"><span class="stat-label">Aproveitamento</span><span class="stat-value">{% if summary.accuracy is None %}–{% else %}{{ summary.accuracy }}%{% endif %}</span><span class="muted">{{ summary.answered }} {% if summary.answered == 1 %}resposta{% else %}respostas{% endif %}</span></div>
+  <div class="stat"><span class="stat-label">Tempo médio</span><span class="stat-value">{% if summary.average_seconds is None %}–{% else %}{{ summary.average_seconds }} s{% endif %}</span><span class="muted">até ver a resposta</span></div>
+</section>
+
+{% if by_topic %}
+<section class="card">
+  <h2>Acertos e erros por tópico</h2>
+  <div id="topic-chart-box" class="chart-box"><canvas id="topic-chart" role="img" aria-label="Barras com acertos e erros por tópico. Os valores estão na tabela abaixo."></canvas></div>
+  <details class="chart-table">
+    <summary>Ver como tabela</summary>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th scope="col">Tópico</th><th scope="col" class="num">Acertos</th><th scope="col" class="num">Erros</th><th scope="col" class="num">Aproveitamento</th></tr></thead>
+        <tbody>
+          {% for row in by_topic %}
+          <tr><td>{{ row.topic }}</td><td class="num">{{ row.correct }}</td><td class="num">{{ row.wrong }}</td><td class="num">{{ row.accuracy }}%</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </details>
+</section>
+
+<div class="filter-row">
+  <label for="topic-filter">Tópico</label>
+  <select id="topic-filter"><option value="">Todos os tópicos</option></select>
+</div>
+<section class="card">
+  <h2>Evolução nos últimos 30 dias</h2>
+  <div class="chart-box chart-box-history"><canvas id="history-chart" role="img" aria-label="Barras com acertos e erros por dia. Os valores estão na tabela abaixo."></canvas></div>
+  <details class="chart-table">
+    <summary>Ver como tabela</summary>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th scope="col">Dia</th><th scope="col" class="num">Acertos</th><th scope="col" class="num">Erros</th></tr></thead>
+        <tbody id="history-table"></tbody>
+      </table>
+    </div>
+  </details>
+</section>
+{{ chart_data|json_script:"chart-data" }}
+{% else %}
+<div class="empty-state">
+  <h2>Seus gráficos aparecem aqui</h2>
+  <p class="muted">Responda alguns flashcards para acompanhar sua evolução.</p>
+  <a class="btn btn-primary" href="{% url 'study' %}">Começar a estudar</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,33 @@
+{% if oob %}{% include "_hud.html" %}{% endif %}
+{% if result %}
+<p class="feedback {% if result.is_correct %}feedback-correct{% else %}feedback-wrong{% endif %}" role="status">
+  {% if result.is_correct %}✓ Acertou!{% else %}✗ Errou.{% endif %}
+  <strong>+{{ result.xp_gained }} XP</strong>{% if result.leveled_up %} · Subiu para o nível {{ profile.level }}!{% endif %}
+  · Volta em {{ result.next_review_label }}
+</p>
+{% endif %}
+{% if card %}
+<article class="flashcard">
+  <header class="flashcard-meta">
+    <span>{{ card.topic|default:"Sem tópico" }}</span>
+    <span class="pill pill-{{ card.difficulty }}">{{ card.get_difficulty_display }}</span>
+  </header>
+  <p class="flashcard-question">{{ card.question }}</p>
+  <button class="btn btn-primary btn-block" type="button"
+          hx-get="{% url 'study_reveal' card.pk %}?inicio={{ started_at }}"
+          hx-target="#study-stage">Mostrar resposta</button>
+  <p class="muted flashcard-count">{{ due_count }} {% if due_count == 1 %}card pendente{% else %}cards pendentes{% endif %}</p>
+</article>
+{% elif next_upcoming %}
+<div class="empty-state">
+  <h2>Tudo revisado por agora</h2>
+  <p class="muted">Sua próxima revisão é em {{ next_upcoming|timeuntil }}.</p>
+  <a class="btn" href="{% url 'flashcards' %}">Gerar mais flashcards</a>
+</div>
+{% else %}
+<div class="empty-state">
+  <h2>Você ainda não tem flashcards</h2>
+  <p class="muted">Envie um material e gere seus primeiros cards.</p>
+  <a class="btn btn-primary" href="{% url 'flashcards' %}">Gerar flashcards</a>
+</div>
+{% endif %}
