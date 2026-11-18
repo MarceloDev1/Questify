@@ -2,14 +2,14 @@ import time
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
-from django.http import HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, render
+from django.http import Http404, HttpResponseBadRequest
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
-from . import analytics, rag, services
+from . import analytics, duels, rag, services
 from .ai import AIServiceError
-from .forms import GenerateFlashcardsForm, MaterialForm
+from .forms import DuelForm, GenerateFlashcardsForm, MaterialForm
 from .models import Flashcard
 
 MAX_RESPONSE_SECONDS = 3600
@@ -197,3 +197,54 @@ def materials(request):
 def material_delete(request):
     request.profile.chunks.filter(title=request.POST.get("title", "")).delete()
     return render(request, "study/_materials_panel.html", _materials_context(request.profile))
+
+
+# Duelos
+
+
+def _duels_context(profile, form=None, notice=None):
+    return {
+        "form": form or DuelForm(),
+        "notice": notice,
+        **duels.duels_overview(profile),
+    }
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def duels_page(request):
+    profile = request.profile
+    form = None
+    notice = None
+    if request.method == "POST":
+        form = DuelForm(request.POST)
+        if form.is_valid():
+            try:
+                duel = duels.challenge(
+                    profile, form.cleaned_data["username"], form.cleaned_data["duration_days"]
+                )
+            except duels.DuelError as exc:
+                form.add_error(None, str(exc))
+            else:
+                form = None
+                notice = (
+                    f"Desafio enviado para {duel.opponent.username}. "
+                    "O duelo começa quando ele aceitar."
+                )
+    return render(request, "study/duels.html", _duels_context(profile, form, notice))
+
+
+@login_required
+@require_POST
+def duel_respond(request, duel_id, decision):
+    if decision not in ("aceitar", "recusar"):
+        raise Http404
+    duels.respond(duel_id, request.profile, accept=decision == "aceitar")
+    return redirect("duels")
+
+
+@login_required
+@require_POST
+def duel_cancel(request, duel_id):
+    duels.cancel(duel_id, request.profile)
+    return redirect("duels")

@@ -63,3 +63,37 @@ class StudyLog(models.Model):
     class Meta:
         managed = False
         db_table = "study_logs"
+
+
+class Duel(models.Model):
+    """Disputa de XP entre dois usuários. "Encerrado" é derivado de `ends_at`."""
+
+    class Status(models.TextChoices):
+        PENDING = "pending", "Aguardando resposta"
+        ACTIVE = "active", "Em andamento"
+        DECLINED = "declined", "Recusado"
+        CANCELLED = "cancelled", "Cancelado"
+
+    id = models.AutoField(primary_key=True)
+    challenger = models.ForeignKey(
+        Profile, db_column="challenger_id", on_delete=models.CASCADE, related_name="duels_sent"
+    )
+    opponent = models.ForeignKey(
+        Profile, db_column="opponent_id", on_delete=models.CASCADE, related_name="duels_received"
+    )
+    duration_days = models.IntegerField()
+    status = models.TextField(choices=Status.choices, default=Status.PENDING)
+    starts_at = models.DateTimeField(null=True, blank=True)
+    ends_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        managed = False
+        db_table = "duels"
+
+    @property
+    def is_finished(self):
+        return self.status == self.Status.ACTIVE and self.ends_at <= timezone.now()
+
+    def other(self, profile):
+        return self.opponent if profile.pk == self.challenger_id else self.challenger

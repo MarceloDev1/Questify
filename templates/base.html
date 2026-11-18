@@ -18,6 +18,7 @@
       <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>Painel</a>
       <a href="{% url 'study' %}" {% if request.resolver_match.url_name == 'study' %}aria-current="page"{% endif %}>Estudar</a>
       <a href="{% url 'flashcards' %}" {% if request.resolver_match.url_name == 'flashcards' %}aria-current="page"{% endif %}>Flashcards</a>
+      <a href="{% url 'duels' %}" {% if request.resolver_match.url_name == 'duels' %}aria-current="page"{% endif %}>Duelos</a>
       <a href="{% url 'materials' %}" {% if request.resolver_match.url_name == 'materials' %}aria-current="page"{% endif %}>Materiais</a>
     </nav>
     {% include "_hud.html" %}

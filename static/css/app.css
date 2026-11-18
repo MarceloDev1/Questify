@@ -223,3 +223,13 @@ th { font-weight: 600; color: var(--text-secondary); }
 @media (prefers-reduced-motion: reduce) {
   .xp-bar span { transition: none; }
 }
+
+.duel { padding: 0.875rem 0; border-top: 1px solid var(--border); }
+.duel:first-of-type { border-top: 0; padding-top: 0; }
+.duel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.duel-scores { display: flex; justify-content: space-between; margin: 0.5rem 0 0.375rem; font-variant-numeric: tabular-nums; }
+.duel-scores strong { font-size: 1.5rem; }
+.duel-bar { height: 8px; border-radius: 4px; background: var(--chart-wrong); overflow: hidden; }
+.duel-bar span { display: block; height: 100%; background: var(--accent); }
+.duel-win { background: var(--success-soft); color: var(--success); }
+.duel-loss { background: var(--danger-soft); color: var(--danger); }

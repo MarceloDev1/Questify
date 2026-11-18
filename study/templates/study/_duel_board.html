@@ -1,0 +1,23 @@
+<div class="duel">
+  <div class="duel-head">
+    <strong>Você × {{ board.opponent.username }}</strong>
+    {% if board.finished %}
+      {% if board.result == "win" %}<span class="pill duel-win">Você venceu</span>
+      {% elif board.result == "loss" %}<span class="pill duel-loss">{{ board.opponent.username }} venceu</span>
+      {% else %}<span class="pill">Empate</span>{% endif %}
+    {% else %}
+      {% if board.result == "lead" %}<span class="pill duel-win">Você está na frente</span>
+      {% elif board.result == "behind" %}<span class="pill duel-loss">Você está atrás</span>
+      {% else %}<span class="pill">Empatados</span>{% endif %}
+    {% endif %}
+  </div>
+  <div class="duel-scores">
+    <span><strong>{{ board.my_xp }}</strong> XP</span>
+    <span><strong>{{ board.opponent_xp }}</strong> XP</span>
+  </div>
+  <div class="duel-bar" role="img" aria-label="Você tem {{ board.my_share }}% do XP do duelo"><span style="width: {{ board.my_share }}%"></span></div>
+  <p class="muted deck-meta">
+    {% if board.finished %}Terminou em {{ board.duel.ends_at|date:"d/m/Y H:i" }}.
+    {% else %}Termina em {{ board.duel.ends_at|timeuntil }} ({{ board.duel.ends_at|date:"d/m H:i" }}).{% endif %}
+  </p>
+</div>

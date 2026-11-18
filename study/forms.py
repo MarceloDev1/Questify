@@ -2,6 +2,7 @@ from pathlib import Path
 
 from django import forms
 
+from .duels import DURATION_CHOICES
 from .rag import ALLOWED_EXTENSIONS
 
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024
@@ -68,3 +69,14 @@ class GenerateFlashcardsForm(forms.Form):
 
     def clean_topic(self):
         return self.cleaned_data["topic"].strip()
+
+
+class DuelForm(forms.Form):
+    username = forms.CharField(
+        label="Nome de usuário do adversário",
+        max_length=30,
+        widget=forms.TextInput(attrs={"autocomplete": "off"}),
+    )
+    duration_days = forms.TypedChoiceField(
+        label="Duração", choices=DURATION_CHOICES, coerce=int, initial=7
+    )

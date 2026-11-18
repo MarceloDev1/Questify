@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Duelos · Questify{% endblock %}
+{% block content %}
+<h1>Duelos</h1>
+<p class="muted">Desafie outro estudante: quem ganhar mais XP durante o período vence.</p>
+
+{% if notice %}<p class="notice" role="status">{{ notice }}</p>{% endif %}
+
+<section class="card">
+  <h2>Novo desafio</h2>
+  <form method="post" class="stack">
+    {% csrf_token %}
+    {% include "_form_fields.html" %}
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Desafiar</button>
+    </div>
+  </form>
+</section>
+
+{% if invites %}
+<section class="card">
+  <h2>Convites recebidos</h2>
+  <ul class="deck">
+    {% for duel in invites %}
+    <li class="deck-item">
+      <div>
+        <p class="deck-question">{{ duel.challenger.username }} desafiou você</p>
+        <p class="muted deck-meta">{{ duel.duration_days }} dias, a contar do aceite</p>
+      </div>
+      <div class="form-actions">
+        <form method="post" action="{% url 'duel_respond' duel.id 'aceitar' %}">{% csrf_token %}<button class="btn btn-primary" type="submit">Aceitar</button></form>
+        <form method="post" action="{% url 'duel_respond' duel.id 'recusar' %}">{% csrf_token %}<button class="btn btn-ghost" type="submit">Recusar</button></form>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if sent %}
+<section class="card">
+  <h2>Aguardando resposta</h2>
+  <ul class="deck">
+    {% for duel in sent %}
+    <li class="deck-item">
+      <div>
+        <p class="deck-question">{{ duel.opponent.username }}</p>
+        <p class="muted deck-meta">{{ duel.duration_days }} dias, a contar do aceite</p>
+      </div>
+      <form method="post" action="{% url 'duel_cancel' duel.id %}">{% csrf_token %}<button class="btn btn-ghost" type="submit">Cancelar</button></form>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<section class="card">
+  <h2>Em andamento</h2>
+  {% for board in active %}
+    {% include "study/_duel_board.html" %}
+  {% empty %}
+    <p class="muted">Nenhum duelo em andamento.</p>
+  {% endfor %}
+</section>
+
+{% if finished %}
+<section class="card">
+  <h2>Encerrados</h2>
+  {% for board in finished %}
+    {% include "study/_duel_board.html" %}
+  {% endfor %}
+</section>
+{% endif %}
+{% endblock %}
